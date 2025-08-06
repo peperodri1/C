@@ -1,6 +1,22 @@
-#include <stdio.h>
+name: Compilación automática en C
 
-int main() {
-    printf("Hola, mundo\n");
-    return 0;
-}
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v3
+
+      - name: Instalar GCC
+        run: sudo apt-get update && sudo apt-get install -y build-essential
+
+      - name: Compilar el programa
+        run: gcc -o mi_programa main.c
+
+      - name: Ejecutar el programa
+        run: ./mi_programa
