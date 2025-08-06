@@ -1,0 +1,25 @@
+name: Compilación automática en C
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v3
+
+      - name: Instalar GCC
+        run: sudo apt-get update && sudo apt-get install -y build-essential
+
+      - name: Compilar el programa
+        run: gcc -o holamundo.c
+
+      - name: Ejecutar el programa
+        run: ./holamundo
+
