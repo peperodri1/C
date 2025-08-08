@@ -1,2 +1,2 @@
 # C
-repositorio para programas en C
+Repositorio para programas en C
