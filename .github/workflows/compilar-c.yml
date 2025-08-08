@@ -19,7 +19,7 @@ jobs:
 
       - name: Añadir fecha y hora al fichero
         run: |
-          echo "$(date '+%Y-%m-%d %H:%M:%S') - Push detectado en main" >> incidencias.txt
+          echo "Push realizado por: ${{ github.actor }} el $(date '+%Y-%m-%d %H:%M:%S')" >> incidencias.txt
 
       - name: Configurar Git
         run: |
