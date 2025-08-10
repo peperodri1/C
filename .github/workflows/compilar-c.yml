@@ -1,37 +1,8 @@
-
-name: Registrar incidencias CSV
-
-on:
-  push:
-    branches:
-      - main
-
+name: Uso de Secrets
+on: push
 jobs:
-  registrar:
+  ejemplo:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout del repositorio
-        uses: actions/checkout@v4
-
-      - name: Configurar Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Crear o actualizar incidencias.csv
-        run: |
-          fecha=$(date '+%Y-%m-%d %H:%M:%S')
-          usuario="${{ github.actor }}"
-          # Si el fichero no existe, añadir cabecera
-          if [ ! -f incidencias.csv ]; then
-            echo "usuario,fecha_hora" > incidencias.csv
-          fi
-          echo "$usuario,$fecha" >> incidencias.csv
-
-      - name: Commit y push de los cambios
-        env:
-          TOKEN: ${{ secrets.PUSH_TOKEN }}
-        run: |
-          git add incidencias.csv
-          git commit -m "Registrar push por ${{ github.actor }} en CSV [skip ci]" || echo "No hay cambios para commitear"
-          git push https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
+      - name: Mostrar secret
+        run: echo "Mi clave es ${{ secrets.API_KEY }}"
