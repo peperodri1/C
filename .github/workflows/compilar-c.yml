@@ -1,33 +1,37 @@
-name: Registrar hora del push en incidencias.txt
+
+name: Registrar incidencias CSV
 
 on:
   push:
-    branches: [main]
-
-permissions:
-  contents: write  # Necesario para hacer commit/push
+    branches:
+      - main
 
 jobs:
-  actualizar-incidencias:
+  registrar:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Clonar el repositorio con permisos
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Añadir fecha y hora al fichero
-        run: |
-          echo "Push realizado por: ${{ github.actor }} el $(date '+%Y-%m-%d %H:%M:%S')" >> incidencias.txt
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
 
       - name: Configurar Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Commit y push de los cambios
+      - name: Crear o actualizar incidencias.csv
         run: |
-          git add incidencias.txt
-          git commit -m "Registrar push en incidencias.txt [skip ci]" || echo "No hay cambios para commitear"
-          git push
+          fecha=$(date '+%Y-%m-%d %H:%M:%S')
+          usuario="${{ github.actor }}"
+          # Si el fichero no existe, añadir cabecera
+          if [ ! -f incidencias.csv ]; then
+            echo "usuario,fecha_hora" > incidencias.csv
+          fi
+          echo "$usuario,$fecha" >> incidencias.csv
+
+      - name: Commit y push de los cambios
+        env:
+          TOKEN: ${{ secrets.PUSH_TOKEN }}
+        run: |
+          git add incidencias.csv
+          git commit -m "Registrar push por ${{ github.actor }} en CSV [skip ci]" || echo "No hay cambios para commitear"
+          git push https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
