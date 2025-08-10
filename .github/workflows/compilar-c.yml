@@ -31,7 +31,7 @@ jobs:
 
       - name: Commit y push de los cambios
         env:
-          TOKEN: ${{ secrets.Nuevo-token }}
+          TOKEN: ${{ secrets.NUEVO_SECRETO }}
         run: |
           git add incidencias.csv
           git commit -m "Registrar push por ${{ github.actor }} en CSV [skip ci]" || echo "No hay cambios para commitear"
