@@ -1,15 +1,14 @@
-name: Registrar incidencias CSV
+name: Incrementar variable y guardar
 
 on:
   push:
     branches:
       - main
-permissions:
-  contents: write  # Necesario para hacer commit/push
 
 jobs:
-  registrar:
+  incrementar:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
@@ -19,20 +18,19 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Crear o actualizar incidencias.csv
+      - name: Leer e incrementar valor
         run: |
-          fecha=$(date '+%Y-%m-%d %H:%M:%S')
-          usuario="${{ github.actor }}"
-          # Si el fichero no existe, añadir cabecera
-          if [ ! -f incidencias.csv ]; then
-            echo "usuario,fecha_hora" > incidencias.csv
+          # Si el archivo no existe, empezamos en 0
+          if [ ! -f resultado.txt ]; then
+            echo 0 > resultado.txt
           fi
-          echo "$usuario,$fecha" >> incidencias.csv
+          valor=$(cat resultado.txt)
+          nuevo=$((valor + 1))
+          echo $nuevo > resultado.txt
+          echo "Nuevo valor: $nuevo"
 
-      - name: Commit y push de los cambios
-        env:
-          TOKEN: ${{ secrets.NUEVO_SECRETO }}
+      - name: Commit y push del nuevo valor
         run: |
-          git add incidencias.csv
-          git commit -m "Registrar push por ${{ github.actor }} en CSV [skip ci]" || echo "No hay cambios para commitear"
-          git push https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
+          git add resultado.txt
+          git commit -m "Incrementar contador a $(cat resultado.txt)" || echo "No hay cambios"
+          git push
